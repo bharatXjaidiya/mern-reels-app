@@ -20,8 +20,8 @@ function authMiddleware(req, res, next) {
         })
     }
 
-    const userId = decoded.id;
-    req.userId = userId;
+    req.userId = decoded.id;
+    req.userName = decoded.userName;
     next();
 }
 

@@ -21,9 +21,11 @@ async function registerController(req, res) {
         const hashedPassword = await bcrypt.hash(password,10);
         // Create user in database
         const newUser = await userModel.create({ userName, email, password: hashedPassword,bio,profilePicture });
+        
         //generating a token and saving it to the cookie storage
         const token = jwt.sign({
-            id: newUser._id
+            id: newUser._id,
+            userName : newUser.userName
         },process.env.JWT_SECRET,{expiresIn:"1 day"})
 
         res.cookie("token",token)
@@ -68,7 +70,8 @@ async function loginController(req, res) {
         }
 
         const token = jwt.sign({
-            id : userExist._id
+            id : userExist._id,
+            userName : userExist.userName
         },process.env.JWT_SECRET,{expiresIn:"1 day"}) 
 
         res.cookie("token",token)

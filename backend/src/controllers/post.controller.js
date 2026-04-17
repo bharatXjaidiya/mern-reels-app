@@ -68,8 +68,8 @@ async function getPostDetailController(req,res){
     const verifiedRequest = postOwnerId === userId;
 
     if(!verifiedRequest){
-        return res.status(401).json({
-            message: "Unautherized access"
+        return res.status(403).json({
+            message: "Forbidden, user dosn't have access to this post"
         })
     }
     
