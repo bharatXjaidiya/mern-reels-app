@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
+const followSchema = new mongoose.Schema({
     follower : {
-        type : mongoose.Types.ObjectId ,
-        required : [true , "followe is required"]
+        type : String
     },
     followee : {
-        type : mongoose.Types.ObjectId ,
-        require : [true , "followee is required"]
+        type : String
     },
 },{timestamps : true})
 
-const userModel = mongoose.model("users",userSchema);
+const followModel = mongoose.model("follow",followSchema);
+
+module.exports = followModel 

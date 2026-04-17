@@ -1,16 +1,21 @@
 const userModel = require("../models/user.models")
+const followModel = require("../models/follow.model")
+
 
 async function followUserController(req, res) {
+
     const followerName = req.userName;
     const followeeName = req.params.followeeName;
+
     if (followerName === followeeName) {
-        return res.satus(400).json({
+        return res.status(400).json({
             message: "can't follow yourself"
         })
     }
     const isFolloweeExists = await userModel.findOne({
-        followee: followeeName
+        userName: followeeName
     })
+
 
     if (!isFolloweeExists) {
         return res.status(404).json({
@@ -18,27 +23,55 @@ async function followUserController(req, res) {
         })
     }
 
-    const alreadyFollowed = userModel.find({
+    const alreadyFollowed = await followModel.findOne({
         follower: followerName,
         followee: followeeName
     })
 
+
     if (alreadyFollowed) {
-       return res.status(200).json({
+        return res.status(200).json({
             message: `You are already following ${followeeName}`,
             follow: alreadyFollowed
         })
     }
 
-    const newFollow = await userModle.create({
-        follower: followeeName,
+
+
+    const newFollow = await followModel.create({
+        follower: followerName,
         followee: followeeName
     })
 
-    res.satus(201).json({
+    res.status(201).json({
         message: "followed successfully",
         newFollow
     })
 }
 
-module.exports = followUserController;
+async function unFollowUserController(req,res){
+    const followerName = req.userName;
+    const followeeName = req.params.followeeName;
+
+    const isFollowing = await followModel.findOne({
+        follower : followerName,
+        followee : followeeName
+    })
+
+    if(!isFollowing){
+        return res.status(400).json({
+            message : "you are not following this user"
+        })
+    }
+
+    await followModel.findByIdAndDelete(isFollowing._id);
+
+    res.status(200).json({
+        message : "you unfollowed " + followeeName
+    })
+}
+
+module.exports = {
+    followUserController,
+    unFollowUserController
+}
